@@ -72,4 +72,32 @@ class HomepageViewModelTests {
             verify(comicInfoObserver, times(1)).onChanged(capture())
         }
     }
+
+    @Test
+    fun comic_info_gets_current_comic() = runBlocking {
+        whenever(repo.getCurrentComic()).thenReturn(comicDummyData)
+
+        homepageViewModel.setComicNumber(0)
+
+        val captor = ArgumentCaptor.forClass(ComicInfo::class.java)
+        captor.run{
+            verify(repo, times(1)).getCurrentComic()
+            verify(comicInfoObserver, times(1)).onChanged(capture())
+            assertEquals(comicDummyData, value)
+        }
+    }
+
+    @Test
+    fun comic_info_gets_specific_comic() = runBlocking {
+        whenever(repo.getComic(1)).thenReturn(comicDummyData)
+
+        homepageViewModel.setComicNumber(1)
+
+        val captor = ArgumentCaptor.forClass(ComicInfo::class.java)
+        captor.run{
+            verify(repo, times(1)).getComic(1)
+            verify(comicInfoObserver, times(1)).onChanged(capture())
+            assertEquals(comicDummyData, value)
+        }
+    }
 }

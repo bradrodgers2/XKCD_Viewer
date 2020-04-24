@@ -16,24 +16,9 @@ class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
     val comicInfo: LiveData<ComicInfo> =
             Transformations.switchMap(comicNumberInput) {comicNumber ->
             liveData {
-                if(comicNumber == 0) {
-                    when (val response = repo.getCurrentComic()) {
-                        ComicInfo() -> {
-                            //noop
-                        }
-                        else -> {
-                            emit(response)
-                        }
-                    }
-                }else{
-                    when (val response = repo.getComic(comicNumber)) {
-                        ComicInfo() -> {
-                            //noop
-                        }
-                        else -> {
-                            emit(response)
-                        }
-                    }
+                when (comicNumber) {
+                    0 -> emit(repo.getCurrentComic())
+                    else -> emit(repo.getComic(comicNumber))
                 }
             }
         }
