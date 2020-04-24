@@ -7,9 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import coil.api.load
-import coil.size.Scale
-import com.bradrodgers.xkcdviewer.R
 import com.bradrodgers.xkcdviewer.databinding.HomepageFragmentBinding
 import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -49,13 +46,18 @@ class HomepageFragment : Fragment() {
 
             Glide.with(this).load(it.img).into(binding.comicImageView)
 
-            if(comicNumberMax == 0) comicNumberMax = it.num
+            if (comicNumberMax == 0) comicNumberMax = it.num
         })
 
         binding.randomBtn.setOnClickListener {
             val rand = (1..comicNumberMax).random()
             viewModel.setComicNumber(rand)
         }
+
+        viewModel.errorStatement.observe(viewLifecycleOwner, Observer {
+            Timber.e("error statement: $it")
+            //TODO:  Implement the error dialog
+        })
 
         viewModel.setComicNumber(0)
 

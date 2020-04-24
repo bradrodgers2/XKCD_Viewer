@@ -14,34 +14,42 @@ class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
     @VisibleForTesting
     val comicNumberInput: MutableLiveData<Int> = MutableLiveData<Int>()
     val comicInfo: LiveData<ComicInfo> =
-            Transformations.switchMap(comicNumberInput) {comicNumber ->
+        Transformations.switchMap(comicNumberInput) { comicNumber ->
             liveData {
                 when (comicNumber) {
-                    0 -> emit(repo.getCurrentComic())
-                    else -> emit(repo.getComic(comicNumber))
+                    0 -> {
+                        val response = repo.getCurrentComic()
+                        if (response is ComicResponse.Data) {
+                            emit(response.comicInfo)
+                        } else {
+                            setErrorStatement("An error has occurred. Try again later")
+                        }
+                    }
+                    else -> {
+                        val response = repo.getComic(comicNumber)
+                        if (response is ComicResponse.Data) {
+                            emit(response.comicInfo)
+                        } else {
+                            setErrorStatement("An error has occurred. Try again later")
+                        }
+
+                    }
                 }
             }
         }
 
-    fun setComicNumber(number: Int){
+    fun setComicNumber(number: Int) {
         Timber.d("setting number to: $number")
         comicNumberInput.value = number
     }
 
-    fun handleError(response: ComicResponse): LiveData<Pair<String, String>>{
-        return liveData {
-            when(response){
-                is ComicResponse.NoInternetException -> {
-                    emit(Pair("No Internet",
-                        "We could not get a valid internet connection. Try again later.")
-                    )
-                }
-                is ComicResponse.BlanketException -> {
-                    Timber.e(response.throwable, "Blanket exception found: ")
-                    emit(Pair("Unknown Error", "An error occurred. Try again later."))
-                }
-            }
+    val errorStatement: LiveData<String>
+        get() {
+            return _errorStatement
         }
+    private val _errorStatement: MutableLiveData<String> = MutableLiveData()
 
+    private fun setErrorStatement(statement: String) {
+        _errorStatement.value = statement
     }
 }

@@ -1,13 +1,18 @@
 package com.bradrodgers.xkcdviewer.repos
 
 import com.bradrodgers.xkcdviewer.api.XkcdApi
-import com.bradrodgers.xkcdviewer.domain.ComicInfo
 import com.bradrodgers.xkcdviewer.domain.ComicResponse
 
 class ComicRepo(private val api: XkcdApi) {
 
-    suspend fun getComic(comicNumber: Int): ComicInfo{
-        return api.getComic(comicNumber)
+    suspend fun getComic(comicNumber: Int): ComicResponse {
+
+        val response = api.getComic(comicNumber)
+        return if (response.isSuccess) {
+            ComicResponse.Data(comicInfo = response.getOrThrow())
+        } else {
+            ComicResponse.BlanketException(response.exceptionOrNull())
+        }
     }
 
     // Useful in the event you want to emit to local storage and observe the database rather than
@@ -21,8 +26,14 @@ class ComicRepo(private val api: XkcdApi) {
 //        }
 //    }
 
-    suspend fun getCurrentComic(): ComicInfo{
-        return api.getCurrentComic()
+    suspend fun getCurrentComic(): ComicResponse {
+        val response = api.getCurrentComic()
+
+        return if (response.isSuccess) {
+            ComicResponse.Data(comicInfo = response.getOrThrow())
+        } else {
+            ComicResponse.BlanketException(response.exceptionOrNull())
+        }
     }
 
 }
