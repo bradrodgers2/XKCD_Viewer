@@ -106,7 +106,7 @@ class HomepageViewModelTests {
 
     @Test
     fun comic_info_specific_returns_error() = runBlocking {
-        whenever(repo.getComic(1)).thenReturn(ComicResponse.BlanketException(Throwable("Here is a throwable")))
+        whenever(repo.getComic(1)).thenReturn(ComicResponse.BlanketException("Here is a throwable"))
 
         homepageViewModel.setComicNumber(1)
 
@@ -120,7 +120,7 @@ class HomepageViewModelTests {
 
     @Test
     fun comic_info_current_returns_error() = runBlocking {
-        whenever(repo.getCurrentComic()).thenReturn(ComicResponse.BlanketException(Throwable("Here is a throwable")))
+        whenever(repo.getCurrentComic()).thenReturn(ComicResponse.BlanketException("Here is a throwable"))
 
         homepageViewModel.setComicNumber(0)
 

@@ -8,10 +8,11 @@ class ComicRepo(private val api: XkcdApi) {
     suspend fun getComic(comicNumber: Int): ComicResponse {
 
         val response = api.getComic(comicNumber)
-        return if (response.isSuccess) {
-            ComicResponse.Data(comicInfo = response.getOrThrow())
+
+        return if (response.isSuccessful) {
+            ComicResponse.Data(comicInfo = response.body()!!)
         } else {
-            ComicResponse.BlanketException(response.exceptionOrNull())
+            ComicResponse.BlanketException(response.message())
         }
     }
 
@@ -29,10 +30,10 @@ class ComicRepo(private val api: XkcdApi) {
     suspend fun getCurrentComic(): ComicResponse {
         val response = api.getCurrentComic()
 
-        return if (response.isSuccess) {
-            ComicResponse.Data(comicInfo = response.getOrThrow())
+        return if (response.isSuccessful) {
+            ComicResponse.Data(comicInfo = response.body()!!)
         } else {
-            ComicResponse.BlanketException(response.exceptionOrNull())
+            ComicResponse.BlanketException(response.message())
         }
     }
 
