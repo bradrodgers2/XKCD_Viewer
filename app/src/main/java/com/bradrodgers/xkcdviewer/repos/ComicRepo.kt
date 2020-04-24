@@ -8,6 +8,7 @@ class ComicRepo(private val api: XkcdApi) {
     suspend fun getComic(comicNumber: Int): ComicResponse {
 
         val response = api.getComic(comicNumber)
+        //TODO: Update to handle http codes
 
         return if (response.isSuccessful) {
             ComicResponse.Data(comicInfo = response.body()!!)
@@ -29,7 +30,7 @@ class ComicRepo(private val api: XkcdApi) {
 
     suspend fun getCurrentComic(): ComicResponse {
         val response = api.getCurrentComic()
-
+        //TODO: Update to handle http codes
         return if (response.isSuccessful) {
             ComicResponse.Data(comicInfo = response.body()!!)
         } else {
