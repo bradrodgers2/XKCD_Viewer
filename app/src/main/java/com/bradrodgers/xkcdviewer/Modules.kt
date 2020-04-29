@@ -1,9 +1,9 @@
 package com.bradrodgers.xkcdviewer
 
 import com.bradrodgers.xkcdviewer.api.XkcdApi
+import com.bradrodgers.xkcdviewer.doa.ComicInfoDoa
 import com.bradrodgers.xkcdviewer.homepage.HomepageViewModel
 import com.bradrodgers.xkcdviewer.repos.ComicRepo
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -20,7 +20,13 @@ val homePageViewModelModule = module {
 
 val repoModule = module {
     single {
-        ComicRepo(get())
+        ComicRepo(get(), get())
+    }
+}
+
+val daoModule = module {
+    single {
+        ComicInfoDoa::class.java
     }
 }
 

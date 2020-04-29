@@ -11,15 +11,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/comicTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintVertical_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         tools:text="Published: April 20th, 2020" />
 
     <TextView
@@ -34,7 +34,8 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/publishDate"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="This is the Title" />
 
     <ImageView
         android:id="@+id/comicImageView"
@@ -45,12 +46,12 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:adjustViewBounds="true"
+        android:contentDescription="@string/comic_that_user_will_see"
         android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/altText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/comicTitle"
-        app:layout_constraintBottom_toTopOf="@+id/altText"
-        android:contentDescription="@string/comic_that_user_will_see" />
+        app:layout_constraintTop_toBottomOf="@+id/comicTitle" />
 
     <TextView
         android:id="@+id/altText"
@@ -68,11 +69,23 @@
         android:id="@+id/randomBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:text="@string/random_comic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/favoriteBtn"
+        app:layout_constraintEnd_toStartOf="@+id/addToFavoritesButton"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/addToFavoritesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintBottom_toBottomOf="@+id/randomBtn"
+        app:layout_constraintEnd_toStartOf="@+id/favoriteBtn"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/randomBtn"
+        app:layout_constraintTop_toTopOf="@+id/randomBtn" />
 
     <Button
         android:id="@+id/favoriteBtn"
@@ -82,6 +95,23 @@
         app:layout_constraintBottom_toBottomOf="@+id/randomBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/randomBtn"
+        app:layout_constraintStart_toEndOf="@+id/addToFavoritesButton"
         app:layout_constraintTop_toTopOf="@+id/randomBtn" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoriteComicRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorPrimary"
+        android:scrollbars="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

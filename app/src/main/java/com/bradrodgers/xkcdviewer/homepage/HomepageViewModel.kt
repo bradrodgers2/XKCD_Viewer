@@ -5,11 +5,13 @@ import androidx.lifecycle.*
 import com.bradrodgers.xkcdviewer.domain.ComicInfo
 import com.bradrodgers.xkcdviewer.domain.ComicResponse
 import com.bradrodgers.xkcdviewer.repos.ComicRepo
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
 
     // Investigate this https://developer.android.com/topic/libraries/architecture/coroutines
+
+    //TODO: Test coverage!
 
     @VisibleForTesting
     val comicNumberInput: MutableLiveData<Int> = MutableLiveData<Int>()
@@ -32,15 +34,26 @@ class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
                         } else {
                             setErrorStatement("An error has occurred. Try again later")
                         }
-
                     }
                 }
             }
         }
 
     fun setComicNumber(number: Int) {
-        Timber.d("setting number to: $number")
         comicNumberInput.value = number
+    }
+
+    fun saveComic(comicInfo: ComicInfo) {
+        viewModelScope.launch {
+            repo.saveComic(comicInfo)
+        }
+    }
+
+    val savedComics: LiveData<List<ComicInfo>> = liveData {
+        val comics = repo.getSavedComics()
+        comics.map {
+            return@map it
+        }
     }
 
     val errorStatement: LiveData<String>

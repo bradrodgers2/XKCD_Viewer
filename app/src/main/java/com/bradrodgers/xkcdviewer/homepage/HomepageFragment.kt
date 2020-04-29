@@ -29,24 +29,30 @@ class HomepageFragment : Fragment() {
         _binding = HomepageFragmentBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        viewModel.comicInfo.observe(viewLifecycleOwner, Observer {
-            Timber.d("specific comic response: $it")
-            binding.altText.text = it.alt
-            binding.comicTitle.text = it.title
+        viewModel.comicInfo.observe(viewLifecycleOwner, Observer { comicInfo ->
+            Timber.d("specific comic response: $comicInfo")
+            binding.altText.text = comicInfo.alt
+            binding.comicTitle.text = comicInfo.title
 
-
+            //TODO: Format this string in the repo
             val dateString = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val date = LocalDate.of(it.year, it.month, it.day)
+                val date = LocalDate.of(comicInfo.year, comicInfo.month, comicInfo.day)
                 "Published: " + date.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
             } else {
-                "Published: " + it.month.toString() + " " + it.day.toString() + ", " + it.year.toString()
+                "Published: " + comicInfo.month.toString() + " " + comicInfo.day.toString() + ", " + comicInfo.year.toString()
             }
 
             binding.publishDate.text = dateString
 
-            Glide.with(this).load(it.img).into(binding.comicImageView)
+            Glide.with(this).load(comicInfo.img).into(binding.comicImageView)
 
-            if (comicNumberMax == 0) comicNumberMax = it.num
+            binding.addToFavoritesButton.setOnClickListener {
+                //TODO: Make this a toggle feature rather than strictly add to
+                viewModel.saveComic(comicInfo)
+            }
+
+            //TODO: Move this to the viewmodel
+            if (comicNumberMax == 0) comicNumberMax = comicInfo.num
         })
 
         binding.randomBtn.setOnClickListener {
@@ -58,6 +64,22 @@ class HomepageFragment : Fragment() {
             Timber.e("error statement: $it")
             //TODO:  Implement the error dialog
         })
+
+        //TODO: Make this a separate layout instead of just a recycler view so we can include a closing X, a header, and an empty state
+        val adapter = FavoriteComicListAdapter()
+        viewModel.savedComics.observe(viewLifecycleOwner, Observer {
+            adapter.data = it
+            adapter.onItemClick = { comicInfo ->
+                viewModel.setComicNumber(comicInfo.num)
+                binding.favoriteComicRecyclerView.visibility = View.GONE
+            }
+        })
+
+        binding.favoriteBtn.setOnClickListener {
+            //TODO: Move this logic to the viewmodel and create an observable to toggle visibility
+            if (adapter.data.isNotEmpty())
+                binding.favoriteComicRecyclerView.visibility = View.VISIBLE
+        }
 
         viewModel.setComicNumber(0)
 
