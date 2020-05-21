@@ -3,23 +3,6 @@ package com.bradrodgers.xkcdviewer.doa
 import com.bradrodgers.xkcdviewer.domain.ComicInfo
 
 object DatabaseTransferHelper {
-
-    //Likely not needed
-//    fun databaseToModel(databaseComicInfo: DatabaseComicInfo): ComicInfo {
-//        return ComicInfo(
-//            num = databaseComicInfo.num,
-//            day = databaseComicInfo.day,
-//            month = databaseComicInfo.month,
-//            year = databaseComicInfo.year,
-//            link = databaseComicInfo.link,
-//            news = databaseComicInfo.news,
-//            safe_title = databaseComicInfo.safe_title,
-//            transcript = databaseComicInfo.transcript,
-//            alt = databaseComicInfo.alt,
-//            img = databaseComicInfo.img,
-//            title = databaseComicInfo.title
-//        )
-//    }
     fun databaseListToModelList(databaseComicInfo: List<DatabaseComicInfo>): List<ComicInfo> {
         return databaseComicInfo.map {
             ComicInfo(

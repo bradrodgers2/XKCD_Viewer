@@ -2,10 +2,10 @@ package com.bradrodgers.xkcdviewer.homepage
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.bradrodgers.xkcdviewer.api.XkcdApi
 import com.bradrodgers.xkcdviewer.domain.ComicInfo
 import com.bradrodgers.xkcdviewer.domain.ComicResponse
 import com.bradrodgers.xkcdviewer.repos.ComicRepo
+import com.bradrodgers.xkcdviewer.testData.TestData.Companion.comicDummyData
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
@@ -22,25 +22,12 @@ class HomepageViewModelTests {
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
-    var homepageViewModel: HomepageViewModel = mock<HomepageViewModel>()
-    var api: XkcdApi = mock<XkcdApi>()
-    var repo: ComicRepo = mock<ComicRepo>()
+    private lateinit var homepageViewModel: HomepageViewModel
+    private val repo: ComicRepo = mock()
     private val intObserver: Observer<Int> = mock()
     private val comicInfoObserver: Observer<ComicInfo> = mock()
     private val errorObserver: Observer<String> = mock()
-    private val comicDummyData = ComicInfo(
-        month = 4,
-        num = 2297,
-        link = "",
-        year = 2020,
-        news = "",
-        safe_title = "Use or Discard By",
-        transcript = "",
-        alt = "One of the things of bear spray says that, and I'm not one to disobey safety instructions, but there are no bears around here. Guess it's time for a camping trip where we leave lots of food out!",
-        img = "https://imgs.xkcd.com/comics/use_or_discard_by.png",
-        title = "Use or Discard By",
-        day = 22
-    )
+    private val savedComicObserver: Observer<List<ComicInfo>> = mock()
 
     @Before
     fun before(){
@@ -48,6 +35,7 @@ class HomepageViewModelTests {
         homepageViewModel.comicNumberInput.observeForever(intObserver)
         homepageViewModel.comicInfo.observeForever(comicInfoObserver)
         homepageViewModel.errorStatement.observeForever(errorObserver)
+        homepageViewModel.savedComics.observeForever(savedComicObserver)
     }
 
     @Test
@@ -130,5 +118,11 @@ class HomepageViewModelTests {
             verify(errorObserver, times(1)).onChanged(capture())
             assertEquals("An error has occurred. Try again later", value)
         }
+    }
+
+    @Test
+    fun save_comic_pings_repo() = runBlocking {
+        homepageViewModel.saveComic(comicDummyData)
+        verify(repo, times(1)).saveComic(comicDummyData)
     }
 }

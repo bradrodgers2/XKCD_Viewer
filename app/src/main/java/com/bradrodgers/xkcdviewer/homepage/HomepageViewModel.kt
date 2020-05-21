@@ -6,12 +6,11 @@ import com.bradrodgers.xkcdviewer.domain.ComicInfo
 import com.bradrodgers.xkcdviewer.domain.ComicResponse
 import com.bradrodgers.xkcdviewer.repos.ComicRepo
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
 
     // Investigate this https://developer.android.com/topic/libraries/architecture/coroutines
-
-    //TODO: Test coverage!
 
     @VisibleForTesting
     val comicNumberInput: MutableLiveData<Int> = MutableLiveData<Int>()
@@ -20,19 +19,25 @@ class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
             liveData {
                 when (comicNumber) {
                     0 -> {
-                        val response = repo.getCurrentComic()
-                        if (response is ComicResponse.Data) {
-                            emit(response.comicInfo)
-                        } else {
-                            setErrorStatement("An error has occurred. Try again later")
+                        when (val response = repo.getCurrentComic()) {
+                            is ComicResponse.Data -> {
+                                emit(response.comicInfo)
+                            }
+                            is ComicResponse.BlanketException -> {
+                                Timber.e(response.throwable)
+                                setErrorStatement("An error has occurred. Try again later")
+                            }
                         }
                     }
                     else -> {
-                        val response = repo.getComic(comicNumber)
-                        if (response is ComicResponse.Data) {
-                            emit(response.comicInfo)
-                        } else {
-                            setErrorStatement("An error has occurred. Try again later")
+                        when (val response = repo.getComic(comicNumber)) {
+                            is ComicResponse.Data -> {
+                                emit(response.comicInfo)
+                            }
+                            is ComicResponse.BlanketException -> {
+                                Timber.e(response.throwable)
+                                setErrorStatement("An error has occurred. Try again later")
+                            }
                         }
                     }
                 }
@@ -50,8 +55,7 @@ class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
     }
 
     val savedComics: LiveData<List<ComicInfo>> = liveData {
-        val comics = repo.getSavedComics()
-        comics.map {
+        repo.getSavedComics().map {
             return@map it
         }
     }
