@@ -12,8 +12,6 @@ import com.bradrodgers.xkcdviewer.domain.ComicResponse
 
 class ComicRepo(private val api: XkcdApi, @VisibleForTesting val comicInfoDoa: ComicInfoDoa) {
 
-    //TODO: Test coverage
-
     suspend fun getComic(comicNumber: Int): ComicResponse {
         val response = api.getComic(comicNumber)
         return if (response.isSuccessful) {
@@ -28,7 +26,7 @@ class ComicRepo(private val api: XkcdApi, @VisibleForTesting val comicInfoDoa: C
         comicInfoDoa.saveComic(databaseComicInfo)
     }
 
-    fun getSavedComics(): LiveData<List<ComicInfo>> = liveData {
+    val savedComics: LiveData<List<ComicInfo>> = liveData {
         comicInfoDoa.getSavedComics().map { savedList ->
             return@map DatabaseTransferHelper.databaseListToModelList(savedList)
         }

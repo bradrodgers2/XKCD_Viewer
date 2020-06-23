@@ -55,7 +55,7 @@ class HomepageViewModel(private val repo: ComicRepo) : ViewModel() {
     }
 
     val savedComics: LiveData<List<ComicInfo>> = liveData {
-        repo.getSavedComics().map {
+        repo.savedComics.map {
             return@map it
         }
     }
